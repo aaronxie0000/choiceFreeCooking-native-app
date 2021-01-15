@@ -1,0 +1,1 @@
+### React Native app of choice-free-cooking web app. Uses the same firebase backend but built frontend again using the same design (with minor changes).
