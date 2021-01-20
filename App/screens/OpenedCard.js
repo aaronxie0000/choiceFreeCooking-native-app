@@ -185,7 +185,7 @@ const openedCardStyle = StyleSheet.create({
     paddingTop: '15%',
   },
   videos: {
-    width: 375,
+    width: 340,
     height: 275,
     marginVertical: 40,
   },

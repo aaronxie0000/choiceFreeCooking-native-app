@@ -100,7 +100,7 @@ function RecipeChoice({navigation}) {
             </ScrollView>
           </MenuOptions>
         </Menu>
-        <Text style={choiceStyle.header}> Today 's Focus</Text>
+        <Text style={choiceStyle.header}> Today's Focus</Text>
         <View style={choiceStyle.descCont}>
           <View style={choiceStyle.desc}>
             <View style={[choiceStyle.number]}>
@@ -153,13 +153,14 @@ const choiceStyle = StyleSheet.create({
   },
   descCont: {
     marginTop: Platform.OS === 'ios' ? 70 : 35,
-    marginBottom: Platform.OS === 'ios' ? 40 : 10,
+    marginBottom: Platform.OS === 'ios' ? 20 : 10,
+    marginRight: 55,
   },
   header: {
     fontSize: 37,
     fontWeight: 'bold',
     marginTop: 20,
-    marginLeft: 10,
+    marginLeft: 30,
   },
   daySelect: {
     position: 'absolute',
@@ -219,10 +220,8 @@ const choiceStyle = StyleSheet.create({
   },
   descText: {
     margin: 5,
-    marginRight: 20,
     fontSize: 17,
     fontWeight: 'bold',
-    paddingHorizontal: 10,
   },
   cardColor1: {
     backgroundColor: colors.text,

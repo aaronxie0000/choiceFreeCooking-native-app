@@ -124,19 +124,19 @@ const detailStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   lastRow: {
-    width: 390,
+    width: 360,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginBottom: 20,
   },
   card: {
-    width: 175,
-    height: 175,
+    width: 170,
+    height: 170,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 10,
+    margin: 5,
     backgroundColor: colors.primary,
   },
   cardText: {

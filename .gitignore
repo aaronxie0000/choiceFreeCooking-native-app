@@ -38,6 +38,7 @@ yarn-error.log
 *.env
 ios/GoogleService-Info.plist
 android/app/google-services.json
+android/app/src/main/assets
 
 # BUCK
 buck-out/
