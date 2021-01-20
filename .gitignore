@@ -35,6 +35,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# my
 *.env
 ios/GoogleService-Info.plist
 android/app/google-services.json
