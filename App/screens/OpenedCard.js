@@ -1,19 +1,21 @@
 import React, {useContext} from 'react';
-import {Text, View, StyleSheet, SafeAreaView} from 'react-native';
+import {Text, View, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
 import {WebView} from 'react-native-webview';
 import colors from './../config/colors.js';
 
 import {DetailTypeContext} from '../context/DetailType.js';
 import {RecipeInfoContext} from '../context/RecipeInfo.js';
-import {ScrollView} from 'react-native-gesture-handler';
-import {ceil} from 'react-native-reanimated';
 
 function OpenedCard() {
   const [detailType, setDetailType] = useContext(DetailTypeContext);
   const [recipeInfo, updateRecipeInfo] = useContext(RecipeInfoContext);
 
   if (!recipeInfo.tech) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={openedCardStyle.loadingCont}>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   function detailContent() {
@@ -156,6 +158,13 @@ function OpenedCard() {
 }
 
 const openedCardStyle = StyleSheet.create({
+  loadingCont: {
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
+  },
   container: {
     justifyContent: 'center',
     alignItems: 'center',

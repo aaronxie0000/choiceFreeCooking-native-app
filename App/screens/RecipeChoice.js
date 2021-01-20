@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Platform,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import {
   Menu,
@@ -17,10 +18,10 @@ import {
 const {SlideInMenu} = renderers;
 import colors from '../config/colors';
 
-import {db} from './../config/firebase.js';
+import firestore from '@react-native-firebase/firestore';
+
 import {DayIdContext} from '../context/DayId.js';
 import {RecipeIdContext} from '../context/RecipeId.js';
-import {ScrollView} from 'react-native-gesture-handler';
 
 function RecipeChoice({navigation}) {
   const [dayInfo, updateDayInfo] = useState({});
@@ -28,7 +29,8 @@ function RecipeChoice({navigation}) {
   const [recipeID, updateRecipeID] = useContext(RecipeIdContext);
 
   useEffect(() => {
-    db.collection('recipeSelect')
+    const subscriber = firestore()
+      .collection('recipeSelect')
       .where('day', '==', dayID)
       .onSnapshot((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -43,6 +45,8 @@ function RecipeChoice({navigation}) {
           });
         });
       });
+
+    return () => subscriber();
   }, [dayID]);
 
   function handleChooseRecipe(id) {
@@ -52,95 +56,114 @@ function RecipeChoice({navigation}) {
 
   //useEffect fetches data when land on page, but there may be delay; to prevent null error to loading screen
   if (!dayInfo.dayTech) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={choiceStyle.loadingCont}>
+        <Text> Loading... </Text>
+      </View>
+    );
   }
 
   return (
-    <SafeAreaView style={choiceStyle.view}>
-      <Menu renderer={SlideInMenu} style={choiceStyle.daySelect}>
-        <MenuTrigger style={choiceStyle.daySelectSelector}>
-          <Text style={choiceStyle.daySelectSelectorText}>{dayID}</Text>
-        </MenuTrigger>
-        <MenuOptions style={choiceStyle.daySelectOptions}>
-          <ScrollView>
-            <MenuOption
-              style={choiceStyle.daySelectOption}
-              onSelect={() => updateDayID('Day One')}>
-              <Text style={choiceStyle.daySelectText}>Day One</Text>
-            </MenuOption>
-            <MenuOption
-              style={choiceStyle.daySelectOption}
-              onSelect={() => updateDayID('Day Two')}>
-              <Text style={choiceStyle.daySelectText}>Day Two</Text>
-            </MenuOption>
-            <MenuOption
-              style={choiceStyle.daySelectOption}
-              onSelect={() => alert('Work In Progress')}>
-              <Text style={choiceStyle.daySelectText}>Day Three</Text>
-            </MenuOption>
-            <MenuOption
-              style={choiceStyle.daySelectOption}
-              onSelect={() => alert('Work In Progress')}>
-              <Text style={choiceStyle.daySelectText}>Day Four</Text>
-            </MenuOption>
-            <MenuOption
-              style={choiceStyle.daySelectOption}
-              onSelect={() => alert('Work In Progress')}>
-              <Text style={choiceStyle.daySelectText}>Day Five</Text>
-            </MenuOption>
-          </ScrollView>
-        </MenuOptions>
-      </Menu>
-
-      <Text style={choiceStyle.header}>Today's Focus</Text>
-
-      <View>
-        <View style={choiceStyle.desc}>
-          <View style={[choiceStyle.number]}>
-            <Text style={choiceStyle.numberFont}>1</Text>
+    <SafeAreaView style={choiceStyle.outerScroll}>
+      <ScrollView contentContainerStyle={choiceStyle.view}>
+        <Menu renderer={SlideInMenu} style={choiceStyle.daySelect}>
+          <MenuTrigger style={choiceStyle.daySelectSelector}>
+            <Text style={choiceStyle.daySelectSelectorText}> {dayID} </Text>
+          </MenuTrigger>
+          <MenuOptions style={choiceStyle.daySelectOptions}>
+            <ScrollView>
+              <MenuOption
+                style={choiceStyle.daySelectOption}
+                onSelect={() => updateDayID('Day One')}>
+                <Text style={choiceStyle.daySelectText}> Day One </Text>
+              </MenuOption>
+              <MenuOption
+                style={choiceStyle.daySelectOption}
+                onSelect={() => updateDayID('Day Two')}>
+                <Text style={choiceStyle.daySelectText}> Day Two </Text>
+              </MenuOption>
+              <MenuOption
+                style={choiceStyle.daySelectOption}
+                onSelect={() => alert('Work In Progress')}>
+                <Text style={choiceStyle.daySelectText}> Day Three </Text>
+              </MenuOption>
+              <MenuOption
+                style={choiceStyle.daySelectOption}
+                onSelect={() => alert('Work In Progress')}>
+                <Text style={choiceStyle.daySelectText}> Day Four </Text>
+              </MenuOption>
+              <MenuOption
+                style={choiceStyle.daySelectOption}
+                onSelect={() => alert('Work In Progress')}>
+                <Text style={choiceStyle.daySelectText}> Day Five </Text>
+              </MenuOption>
+            </ScrollView>
+          </MenuOptions>
+        </Menu>
+        <Text style={choiceStyle.header}> Today 's Focus</Text>
+        <View style={choiceStyle.descCont}>
+          <View style={choiceStyle.desc}>
+            <View style={[choiceStyle.number]}>
+              <Text style={choiceStyle.numberFont}> 1 </Text>
+            </View>
+            <Text style={choiceStyle.descText}> {dayInfo.dayTech[0]} </Text>
           </View>
-          <Text style={choiceStyle.descText}>{dayInfo.dayTech[0]}</Text>
-        </View>
-
-        <View style={choiceStyle.desc}>
-          <View style={[choiceStyle.number]}>
-            <Text style={choiceStyle.numberFont}>2</Text>
+          <View style={choiceStyle.desc}>
+            <View style={[choiceStyle.number]}>
+              <Text style={choiceStyle.numberFont}> 2 </Text>
+            </View>
+            <Text style={choiceStyle.descText}> {dayInfo.dayTech[1]} </Text>
           </View>
-          <Text style={choiceStyle.descText}>{dayInfo.dayTech[1]}</Text>
         </View>
-      </View>
-
-      <TouchableOpacity
-        onPress={() => handleChooseRecipe(dayInfo.recipeOneID)}
-        style={[choiceStyle.cardBg, choiceStyle.cardColor1]}>
-        <Text style={choiceStyle.cardTextStyle}>{dayInfo.recipeOneTitle}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => handleChooseRecipe(dayInfo.recipeTwoID)}
-        style={[choiceStyle.cardBg, choiceStyle.cardColor2]}>
-        <Text style={choiceStyle.cardTextStyle}>{dayInfo.recipeTwoTitle}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleChooseRecipe(dayInfo.recipeOneID)}
+          style={[choiceStyle.cardBg, choiceStyle.cardColor1]}>
+          <Text style={choiceStyle.cardTextStyle}>
+            {dayInfo.recipeOneTitle}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleChooseRecipe(dayInfo.recipeTwoID)}
+          style={[choiceStyle.cardBg, choiceStyle.cardColor2]}>
+          <Text style={choiceStyle.cardTextStyle}>
+            {dayInfo.recipeTwoTitle}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const choiceStyle = StyleSheet.create({
-  view: {
+  loadingCont: {
     height: '100%',
-    backgroundColor: colors.background,
-    justifyContent: 'space-around',
+    width: '100%',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
+  },
+  outerScroll: {
     flex: 1,
+    backgroundColor: colors.background,
+    minHeight: 600,
+  },
+  view: {
+    alignItems: 'center',
+    paddingBottom: Platform.OS === 'ios' ? 5 : 40,
+  },
+  descCont: {
+    marginTop: Platform.OS === 'ios' ? 70 : 35,
+    marginBottom: Platform.OS === 'ios' ? 40 : 10,
   },
   header: {
     fontSize: 37,
     fontWeight: 'bold',
     marginTop: 20,
+    marginLeft: 10,
   },
   daySelect: {
     position: 'absolute',
-    left: -5,
+    left: -10,
     top: -5,
   },
   daySelectSelector: {
@@ -172,8 +195,9 @@ const choiceStyle = StyleSheet.create({
     paddingLeft: 10,
   },
   cardBg: {
-    height: '25%',
-    width: '90%',
+    height: 180,
+    width: 350,
+    marginVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
@@ -190,7 +214,7 @@ const choiceStyle = StyleSheet.create({
     marginRight: 10,
     fontSize: 20,
     textAlignVertical: 'center',
-    borderRadius: Platform.OS === 'ios' ? 8 : 5,
+    borderRadius: 8,
     backgroundColor: colors.primary,
   },
   descText: {
@@ -198,6 +222,7 @@ const choiceStyle = StyleSheet.create({
     marginRight: 20,
     fontSize: 17,
     fontWeight: 'bold',
+    paddingHorizontal: 10,
   },
   cardColor1: {
     backgroundColor: colors.text,

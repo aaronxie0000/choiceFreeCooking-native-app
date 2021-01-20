@@ -31,6 +31,7 @@ function App() {
                     name="Landing"
                     options={{
                       headerStyle: {backgroundColor: colors.background},
+                      title: 'Welcome',
                     }}
                     component={Landing}
                   />
@@ -38,6 +39,7 @@ function App() {
                     name="Choices"
                     options={{
                       headerStyle: {backgroundColor: colors.background},
+                      title: 'Options',
                     }}
                     component={RecipeChoice}
                   />
@@ -52,7 +54,7 @@ function App() {
                     name="Detail"
                     options={{
                       headerStyle: {backgroundColor: colors.background},
-                      title: "",
+                      title: '',
                     }}
                     component={OpenedCard}
                   />

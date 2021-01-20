@@ -5,15 +5,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import colors from './../config/colors.js';
 
-import {db} from './../config/firebase.js';
+import firestore from '@react-native-firebase/firestore';
 
 import {DetailTypeContext} from '../context/DetailType.js';
 import {RecipeIdContext} from '../context/RecipeId.js';
 import {RecipeInfoContext} from '../context/RecipeInfo.js';
-import {ceil} from 'react-native-reanimated';
+
 
 function RecipeDetail({navigation}) {
   const [detailType, setDetailType] = useContext(DetailTypeContext);
@@ -23,7 +24,7 @@ function RecipeDetail({navigation}) {
   //on load, get all the recipe detail; when open a specific card get that specific part of info
   useEffect(() => {
 
-    db.collection('recipeDetail')
+    const subscriber = firestore().collection('recipeDetail')
       .where('recipeID', '==', recipeID || 0)
       .onSnapshot((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -42,7 +43,9 @@ function RecipeDetail({navigation}) {
           });
         });
       });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    return () => subscriber();
+  }, [recipeID]); // eslint-disable-line react-hooks/exhaustive-deps
 
   //when open card, get detail
   function cardOpenHandle(type) {
@@ -52,6 +55,7 @@ function RecipeDetail({navigation}) {
 
   return (
     <SafeAreaView style={detailStyle.container}>
+      <ScrollView contentContainerStyle={detailStyle.innerBox}>
       <Text style={detailStyle.title}>
         {recipeInfo.recipeTitle ? recipeInfo.recipeTitle : 'Loading'}
       </Text>
@@ -89,6 +93,8 @@ function RecipeDetail({navigation}) {
           <Text style={detailStyle.cardText}>Concept</Text>
         </TouchableOpacity>
       </View>
+
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -97,9 +103,11 @@ const detailStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    height: '100%',
-    width: '100%',
     alignItems: 'center',
+  },
+  innerBox:{
+    alignItems: 'center',
+    paddingBottom: 70,
   },
   title: {
     fontSize: 40,
@@ -107,6 +115,7 @@ const detailStyle = StyleSheet.create({
     marginBottom: 50,
     marginTop: 40,
     width: '80%',
+    padding: 1,
     textAlign: 'center',
   },
   rowCont: {
@@ -119,6 +128,7 @@ const detailStyle = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    marginBottom: 20,
   },
   card: {
     width: 175,
