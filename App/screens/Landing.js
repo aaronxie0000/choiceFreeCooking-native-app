@@ -6,7 +6,7 @@ function Landing({navigation}) {
   return (
     <SafeAreaView style={appStyle.window}>
       <Text style={appStyle.header}>Choice Free Cooking</Text>
-      <TouchableOpacity onPress={()=> navigation.navigate('Choices')} style={appStyle.button}><Text style={{color:colors.background, fontSize: 30, padding: 7}}>Starts Here</Text></TouchableOpacity>
+      <TouchableOpacity onPress={()=> navigation.navigate('Choices')} style={appStyle.button}><Text style={appStyle.buttonText}>Starts Here</Text></TouchableOpacity>
       <Image style={appStyle.mainImg} source={require('../assets/undrawFigure.png')} />
     </SafeAreaView>
   );
@@ -36,6 +36,11 @@ const appStyle = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 10,
     padding: 3
+  },
+  buttonText: {
+    color: colors.background,
+    fontSize: 30,
+    padding: 7,
   }
 });
 

@@ -1,37 +1,94 @@
-import React, {useState} from 'react';
-import {Text, View, TouchableOpacity, StyleSheet, SafeAreaView} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import React, {useContext, useEffect} from 'react';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+} from 'react-native';
 import colors from './../config/colors.js';
 
+import {db} from './../config/firebase.js';
+
+import {DetailTypeContext} from '../context/DetailType.js';
+import {RecipeIdContext} from '../context/RecipeId.js';
+import {RecipeInfoContext} from '../context/RecipeInfo.js';
+import {ceil} from 'react-native-reanimated';
+
 function RecipeDetail({navigation}) {
-  const [choosenRecipe, updateRecipe] = useState('Homemade Pasta');
+  const [detailType, setDetailType] = useContext(DetailTypeContext);
+  const [recipeID, updateRecipeID] = useContext(RecipeIdContext);
+  const [recipeInfo, updateRecipeInfo] = useContext(RecipeInfoContext);
+
+  //on load, get all the recipe detail; when open a specific card get that specific part of info
+  useEffect(() => {
+
+    db.collection('recipeDetail')
+      .where('recipeID', '==', recipeID || 0)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const rawData = doc.data();
+
+          updateRecipeInfo({
+            changes: rawData.changes,
+            concept: rawData.concept,
+            equipment: rawData.equipment,
+            ingredients: rawData.ingredients,
+            linkToRecipe: rawData.linkToRecipe,
+            notes: rawData.notes,
+            simplification: rawData.simplification,
+            tech: rawData.tech,
+            recipeTitle: rawData.recipeTitle,
+          });
+        });
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  //when open card, get detail
+  function cardOpenHandle(type) {
+    setDetailType(type);
+    navigation.navigate('Detail');
+  }
 
   return (
     <SafeAreaView style={detailStyle.container}>
-      <ScrollView
-        style={detailStyle.outerBox}
-        contentContainerStyle={detailStyle.innerBox}>
-        <View style={[detailStyle.titleCard]}>
-          <View style={[detailStyle.titleCont]}>
-            <Text style={detailStyle.title}>{choosenRecipe}</Text>
-          </View>
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Detail')} style={[detailStyle.card, detailStyle.card2]}>
+      <Text style={detailStyle.title}>
+        {recipeInfo.recipeTitle ? recipeInfo.recipeTitle : 'Loading'}
+      </Text>
+
+      <View style={detailStyle.rowCont}>
+        <TouchableOpacity
+          onPress={() => cardOpenHandle('Ingredients')}
+          style={detailStyle.card}>
           <Text style={detailStyle.cardText}>Ingredients</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Detail')} style={[detailStyle.card, detailStyle.card1]}>
-          <Text style={detailStyle.cardText}>The Recipe</Text>
+        <TouchableOpacity
+          onPress={() => cardOpenHandle('Recipe')}
+          style={detailStyle.card}>
+          <Text style={detailStyle.cardText}>Recipe</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Detail')} style={[detailStyle.card, detailStyle.card2]}>
-          <Text style={detailStyle.cardText}>Quick Notes</Text>
+      </View>
+
+      <View style={detailStyle.rowCont}>
+        <TouchableOpacity
+          onPress={() => cardOpenHandle('Notes')}
+          style={detailStyle.card}>
+          <Text style={detailStyle.cardText}>Notes</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Detail')} style={[detailStyle.card, detailStyle.card1]}>
-          <Text style={detailStyle.cardText}>Technique Notes</Text>
+        <TouchableOpacity
+          onPress={() => cardOpenHandle('Technique')}
+          style={detailStyle.card}>
+          <Text style={detailStyle.cardText}>Technique</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Detail')} style={[detailStyle.card, detailStyle.card2]}>
-          <Text style={detailStyle.cardText}>Concept Notes</Text>
+      </View>
+
+      <View style={detailStyle.lastRow}>
+        <TouchableOpacity
+          onPress={() => cardOpenHandle('Concept')}
+          style={detailStyle.card}>
+          <Text style={detailStyle.cardText}>Concept</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -40,57 +97,42 @@ const detailStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  outerBox: {
-    flex: 1,
-  },
-  innerBox: {
-    paddingTop: 160,
-    paddingBottom: 70,
-    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
     alignItems: 'center',
-  },
-  titleCard: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    position: 'absolute',
-    top: 2,
-    left: 2,
-    backgroundColor: colors.primary,
-  },
-  titleCont: {
-    position: 'absolute',
-    width: 150,
-    top: 55,
-    left: 10,
   },
   title: {
+    fontSize: 40,
     fontWeight: 'bold',
+    marginBottom: 50,
+    marginTop: 40,
+    width: '80%',
     textAlign: 'center',
-    fontSize: 20,
-    letterSpacing: 2,
-    color: colors.background,
+  },
+  rowCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  lastRow: {
+    width: 390,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   card: {
-    width: '90%',
-    height: 300,
-    marginVertical: 30,
+    width: 175,
+    height: 175,
     borderRadius: 10,
-    flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
-  },
-  card1: {
-    backgroundColor: colors.text,
-  },
-  card2: {
+    justifyContent: 'center',
+    margin: 10,
     backgroundColor: colors.primary,
   },
   cardText: {
-    fontWeight: '800',
-    fontSize: 30,
+    fontWeight: '700',
     color: colors.background,
+    fontSize: 17,
   },
 });
 

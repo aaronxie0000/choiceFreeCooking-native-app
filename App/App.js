@@ -9,36 +9,61 @@ import RecipeDetail from './screens/RecipeDetail.js';
 import OpenedCard from './screens/OpenedCard.js';
 import colors from './config/colors.js';
 
+import {DayIdProvider} from './context/DayId.js';
+import {RecipeIdProvider} from './context/RecipeId.js';
+import {DetailTypeProvider} from './context/DetailType.js';
+import {InfoProvider} from './context/RecipeInfo.js';
+
+import {MenuProvider} from 'react-native-popup-menu';
+
 const Stack = createStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Landing">
-        <Stack.Screen
-          name="Landing"
-          options={{headerStyle: {backgroundColor: colors.background}}}
-          component={Landing}
-        />
-        <Stack.Screen
-          name="Choices"
-          options={{headerStyle: {backgroundColor: colors.background}}}
-          component={RecipeChoice}
-        />
-         <Stack.Screen
-          name="Recipe"
-          options={{headerStyle: {backgroundColor: colors.background}}}
-          component={RecipeDetail}
-        />
-        <Stack.Screen
-          name="Detail"
-          options={{headerStyle: {backgroundColor: colors.background}}}
-          component={OpenedCard}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <DetailTypeProvider>
+      <DayIdProvider>
+        <RecipeIdProvider>
+          <InfoProvider>
+            <MenuProvider>
+              <NavigationContainer>
+                <Stack.Navigator initialRouteName="Landing">
+                  <Stack.Screen
+                    name="Landing"
+                    options={{
+                      headerStyle: {backgroundColor: colors.background},
+                    }}
+                    component={Landing}
+                  />
+                  <Stack.Screen
+                    name="Choices"
+                    options={{
+                      headerStyle: {backgroundColor: colors.background},
+                    }}
+                    component={RecipeChoice}
+                  />
+                  <Stack.Screen
+                    name="Recipe"
+                    options={{
+                      headerStyle: {backgroundColor: colors.background},
+                    }}
+                    component={RecipeDetail}
+                  />
+                  <Stack.Screen
+                    name="Detail"
+                    options={{
+                      headerStyle: {backgroundColor: colors.background},
+                      title: "",
+                    }}
+                    component={OpenedCard}
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </MenuProvider>
+          </InfoProvider>
+        </RecipeIdProvider>
+      </DayIdProvider>
+    </DetailTypeProvider>
   );
 }
-
 
 export default App;
