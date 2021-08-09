@@ -54,6 +54,7 @@ function OpenedCard() {
               source={{uri: recipeInfo.linkToRecipe}}
               javaScriptEnabled={true}
               domStorageEnabled={true}
+              allowsFullscreenVideo={true}
             />
             <Text style={openedCardStyle.headers}>Suggested Changes</Text>
             {recipeInfo.changes.map((step, index) => {
@@ -100,6 +101,7 @@ function OpenedCard() {
                     source={{uri: step}}
                     javaScriptEnabled={true}
                     domStorageEnabled={true}
+                    allowsFullscreenVideo={true}
                   />
                 );
               } else {
@@ -125,6 +127,7 @@ function OpenedCard() {
                     source={{uri: step}}
                     javaScriptEnabled={true}
                     domStorageEnabled={true}
+                    allowsFullscreenVideo={true}
                   />
                 );
               } else {
